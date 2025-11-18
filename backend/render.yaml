@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: fullstack-blog-backend
+    env: node
+    region: oregon
+    branch: main
+    rootDir: ./
+    buildCommand: "npm install"
+    startCommand: "node server.js"
+    autoDeploy: true
