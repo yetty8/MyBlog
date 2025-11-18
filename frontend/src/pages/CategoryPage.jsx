@@ -27,12 +27,7 @@ export default function CategoryPage() {
 
   return (
     <section className="max-w-7xl mx-auto px-6 py-16 bg-gray-100 dark:bg-gray-900">
-      <Link
-        to="/"
-        className="text-blue-600 dark:text-blue-400 font-semibold hover:underline mb-6 inline-block"
-      >
-        ← Back to Home
-      </Link>
+     
 
       <h1 className="text-5xl font-extrabold mb-12 text-gray-900 dark:text-white">
         {categoryData.name}
