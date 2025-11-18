@@ -1,7 +1,7 @@
 // src/pages/LifestyleDetail.jsx
 import React from "react";
 import { useParams, Link } from "react-router-dom";
-import lifestylePosts from "../data/LifestyleData";
+import lifestylePosts from "../data/lifestyleData";
 import { FaArrowLeft } from "react-icons/fa";
 
 export default function LifestyleDetail() {
