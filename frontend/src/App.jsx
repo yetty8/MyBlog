@@ -1,37 +1,38 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import CreatePost from "./pages/CreatePost";
-import CategoryPage from "./pages/CategoryPage";
-import PostPage from "./pages/PostPage";
-import CodingShowcase from "./components/CodingShowcase";
-import BackToHome from "./components/BackToHome"; // Import the floating button
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
+import Navbar from './components/Navbar';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import CreatePost from './pages/CreatePost';
+import CategoryPage from './pages/CategoryPage';
+import Post from './pages/Post';  // Changed from PostPage to Post
+import Footer from './components/Footer';
 
-export default function App() {
+function App() {
   return (
-    <BrowserRouter>
-      {/* Floating Back to Home button */}
-      <BackToHome />
-
-      <Routes>
-        {/* HOME */}
-        <Route path="/" element={<Home />} />
-
-        {/* AUTH */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-
-        {/* CREATE POST */}
-        <Route path="/create-post" element={<CreatePost />} />
-
-        {/* CODING SHOWCASE */}
-        <Route path="/coding-showcase" element={<CodingShowcase />} />
-
-        {/* CATEGORY PAGES */}
-        <Route path="/category/:category" element={<CategoryPage />} />
-        <Route path="/category/:category/:postSlug" element={<PostPage />} />
-      </Routes>
-    </BrowserRouter>
+    <Router>
+      <AuthProvider>
+        <ThemeProvider>
+          <div className="min-h-screen flex flex-col">
+            <Navbar />
+            <main className="flex-grow">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/create-post" element={<CreatePost />} />
+                <Route path="/category/:category" element={<CategoryPage />} />
+                <Route path="/category/:category/:slug" element={<Post />} />  {/* Updated this line */}
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </ThemeProvider>
+      </AuthProvider>
+    </Router>
   );
 }
+
+export default App;

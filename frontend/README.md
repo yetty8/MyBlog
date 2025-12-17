@@ -1,17 +1,35 @@
-# React + Vite
+# MyBlog - A Modern Fullstack Blog
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive, full-stack blog application built with React, Node.js, and MongoDB. This project features user authentication, rich text editing, and a clean, modern UI with dark mode support.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 📝 Create, read, update, and delete blog posts
+- 👤 User authentication and authorization
+- 🌓 Light and dark mode support
+- 📱 Fully responsive design
+- 🏷️ Categorization of posts
+- ✨ Modern UI with smooth animations
 
-## React Compiler
+## 🛠️ Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend**: React, React Router, Tailwind CSS, Framer Motion
+- **Backend**: Node.js, Express
+- **Database**: MongoDB with Mongoose
+- **Authentication**: JWT (JSON Web Tokens)
+- **State Management**: React Context API
 
-## Expanding the ESLint configuration
+## 🚀 Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-# My-Blog
+### Prerequisites
+
+- Node.js (v14+)
+- npm or yarn
+- MongoDB Atlas account or local MongoDB instance
+
+### Installation
+
+1. Clone the repository
+   ```bash
+   git clone [https://github.com/yourusername/fullstack-blog.git](https://github.com/yourusername/fullstack-blog.git)
+   cd fullstack-blog

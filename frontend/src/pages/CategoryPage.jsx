@@ -6,7 +6,7 @@ export default function CategoryPage() {
   const navigate = useNavigate();
 
   const categoryData = categories.find(
-    (c) => c.name.toLowerCase() === category
+    (c) => c.slug.toLowerCase() === category?.toLowerCase()
   );
 
   if (!categoryData) {
@@ -27,8 +27,6 @@ export default function CategoryPage() {
 
   return (
     <section className="max-w-7xl mx-auto px-6 py-16 bg-gray-100 dark:bg-gray-900">
-     
-
       <h1 className="text-5xl font-extrabold mb-12 text-gray-900 dark:text-white">
         {categoryData.name}
       </h1>
@@ -38,7 +36,7 @@ export default function CategoryPage() {
           <div
             key={post.slug}
             onClick={() =>
-              navigate(`/category/${categoryData.name.toLowerCase()}/${post.slug}`)
+              navigate(`/category/${categoryData.slug}/${post.slug}`)
             }
             className="
               rounded-2xl overflow-hidden shadow-lg

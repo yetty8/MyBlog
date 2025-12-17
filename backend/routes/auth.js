@@ -1,42 +1,41 @@
-import express from "express";
-import User from "../models/User.js";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import express from 'express';
+import { check } from 'express-validator';
+import { register, login, getMe } from '../controllers/auth.js';
+import { protect } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Register
-router.post("/register", async (req, res) => {
-  const { username, email, password } = req.body;
-  try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ msg: "Email already registered" });
+// @route   POST /api/auth/register
+// @desc    Register a new user
+// @access  Public
+router.post(
+  '/register',
+  [
+    check('username', 'Username is required').not().isEmpty(),
+    check('email', 'Please include a valid email').isEmail(),
+    check(
+      'password',
+      'Please enter a password with 6 or more characters'
+    ).isLength({ min: 6 }),
+  ],
+  register
+);
 
-    const newUser = new User({ username, email, password });
-    await newUser.save();
+// @route   POST /api/auth/login
+// @desc    Authenticate user & get token
+// @access  Public
+router.post(
+  '/login',
+  [
+    check('email', 'Please include a valid email').isEmail(),
+    check('password', 'Password is required').exists(),
+  ],
+  login
+);
 
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
-    res.json({ user: { id: newUser._id, username, email }, token });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Login
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ msg: "Invalid credentials" });
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
-    res.json({ user: { id: user._id, username: user.username, email }, token });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+// @route   GET /api/auth/me
+// @desc    Get current user
+// @access  Private
+router.get('/me', protect, getMe);
 
 export default router;

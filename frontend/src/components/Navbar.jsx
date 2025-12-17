@@ -1,118 +1,203 @@
-import { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ThemeContext } from "../context/ThemeContext";
-import { motion } from "framer-motion";
-import { FaMoon, FaSun, FaBars, FaTimes } from "react-icons/fa";
-import CategoryButton from "./CategoryButton";
+import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext'; 
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaMoon, FaSun, FaBars, FaTimes } from 'react-icons/fa';
+import { useState, useEffect } from 'react';
 
-export default function Navbar({ selectedCategory, setSelectedCategory }) {
-  const { theme, toggleTheme } = useContext(ThemeContext);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const navigate = useNavigate();
+const categories = ["Technology", "Lifestyle", "Education", "Business", "Travel"];
 
-  const categories = ["Technology", "Lifestyle", "Education", "Business", "Travel"];
+const Navbar = () => {
+  const { isAuthenticated, user, logoutUser } = useAuth();
+  const { theme, toggleTheme } = useTheme();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
 
-  const DarkModeButton = () => {
-    const circleSize = 20;
-    const buttonWidth = 48;
-    const padding = 2;
-    const maxX = buttonWidth - circleSize - padding * 2;
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location]);
 
-    return (
-      <motion.button
-        onClick={toggleTheme}
-        whileHover={{ scale: 1.1 }}
-        className="relative flex items-center justify-start w-12 h-6 rounded-full transition-colors duration-300 bg-gray-300 dark:bg-gray-600 shadow-inner px-1"
-      >
-        <motion.div
-          layout
-          animate={{ x: theme === 'light' ? 0 : maxX }}
-          transition={{ type: "spring", stiffness: 500, damping: 30 }}
-          className="w-5 h-5 rounded-full bg-white dark:bg-yellow-400 shadow-md flex items-center justify-center"
-          whileHover={{ scale: 1.2 }}
-        >
-          {theme === "light" ? <FaMoon className="text-gray-800 text-sm" /> : <FaSun className="text-yellow-500 text-sm" />}
-        </motion.div>
-      </motion.button>
-    );
-  };
+  // Add scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
 
-  // Handle category click
-  const handleCategoryClick = (cat) => {
-    setSelectedCategory(cat);
-    navigate(`/${cat.toLowerCase()}`); // Navigate to /technology, /lifestyle, etc.
-    setMenuOpen(false); // Close mobile menu if open
-  };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-white/70 dark:bg-gray-900/60 shadow-sm border-b border-white/20 dark:border-gray-700/40">
-      <div className="max-w-6xl mx-auto px-6 py-3 flex justify-between items-center">
-        {/* Logo */}
-        <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-          MyBlog
-        </Link>
+    <>
+      <nav className={`fixed w-full z-50 transition-all duration-300 ${
+        scrolled 
+          ? 'bg-white/95 dark:bg-gray-900/95 shadow-md backdrop-blur-sm' 
+          : 'bg-white dark:bg-gray-900 shadow-sm'
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16 items-center">
+            {/* Logo and Desktop Navigation */}
+            <div className="flex items-center">
+              <Link 
+                to="/" 
+                className="flex items-center space-x-2 group"
+              >
+                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  MyBlog
+                </span>
+              </Link>
+              
+              <div className="hidden md:ml-10 md:flex md:space-x-1">
+                {categories.map((category) => (
+                  <Link
+                    key={category}
+                    to={`/category/${category.toLowerCase()}`}
+                    className="px-3 py-2 rounded-md text-sm font-medium transition-colors
+                      text-gray-700 dark:text-gray-300 
+                      hover:text-blue-600 dark:hover:text-blue-400
+                      hover:bg-gray-100 dark:hover:bg-gray-800/50"
+                  >
+                    {category}
+                  </Link>
+                ))}
+              </div>
+            </div>
+            
+            {/* Right side items */}
+            <div className="flex items-center space-x-4">
+              {/* Theme Toggle */}
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-full focus:outline-none 
+                  hover:bg-gray-200 dark:hover:bg-gray-700 
+                  transition-colors duration-200"
+                aria-label="Toggle dark mode"
+              >
+                {theme === 'dark' ? (
+                  <FaSun className="w-5 h-5 text-yellow-400" />
+                ) : (
+                  <FaMoon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                )}
+              </button>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-4">
-          {categories.map((cat) => (
-           <CategoryButton
-              key={cat}
-              category={cat}
-              isActive={selectedCategory === cat}
-              onClick={() => setSelectedCategory(cat)}
-            />
-          ))}
+              {/* Auth Buttons */}
+              {isAuthenticated ? (
+                <div className="hidden md:flex items-center space-x-4">
+                  <div className="relative group">
+                    <button className="flex items-center space-x-2 px-3 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {user?.username || 'User'}
+                      </span>
+                      <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-300">
+                          {user?.username?.charAt(0).toUpperCase() || 'U'}
+                        </span>
+                      </div>
+                    </button>
+                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                      <button
+                        onClick={logoutUser}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        Sign out
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="hidden md:flex items-center space-x-3">
+                  <Link
+                    to="/login"
+                    className="px-4 py-2 rounded-md text-sm font-medium transition-colors
+                      text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                  >
+                    Log in
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="px-4 py-2 rounded-md text-sm font-medium text-white
+                      bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700
+                      transition-all duration-200 shadow-md hover:shadow-lg"
+                  >
+                    Sign up
+                  </Link>
+                </div>
+              )}
 
-          <Link
-            to="#"
-            onClick={() => scrollToTop()}
-            className="px-4 py-2 rounded-full border bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-blue-500 hover:text-white transition font-medium no-underline"
-          >
-            Home
-          </Link>
-
-          <DarkModeButton />
+              {/* Mobile menu button */}
+              <div className="md:hidden">
+                <button
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  className="p-2 rounded-full focus:outline-none hover:bg-gray-200 dark:hover:bg-gray-700"
+                  aria-label="Toggle menu"
+                >
+                  {isMobileMenuOpen ? (
+                    <FaTimes className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                  ) : (
+                    <FaBars className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Mobile Menu Button */}
-        <button className="md:hidden text-2xl dark:text-white" onClick={() => setMenuOpen(true)}>
-          <FaBars />
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      {menuOpen && (
-        <motion.div
-          initial={{ x: "100%" }}
-          animate={{ x: 0 }}
-          exit={{ x: "100%" }}
-          transition={{ duration: 0.3 }}
-          className="fixed top-0 right-0 h-full w-64 bg-white dark:bg-gray-900 shadow-xl p-6 flex flex-col gap-6 z-50"
-        >
-          <button className="text-2xl self-end dark:text-white" onClick={() => setMenuOpen(false)}>
-            <FaTimes />
-          </button>
-
-          {categories.map((cat) => (
-           <CategoryButton
-              key={cat}
-              category={cat}
-              isActive={selectedCategory === cat}
-              onClick={() => setSelectedCategory(cat)}
-            />
-          ))}
-
-         <Link
-          to="/"
-          onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }); setMenuOpen(false); }}
-          className="px-4 py-2 rounded-full border bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-blue-500 hover:text-white transition font-medium"
-        >
-          Home
-        </Link>
-
-          <DarkModeButton />
-        </motion.div>
-      )}
-    </nav>
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden overflow-hidden"
+            >
+              <div className="px-2 pt-2 pb-4 space-y-1 border-t border-gray-200 dark:border-gray-700">
+                {categories.map((category) => (
+                  <Link
+                    key={`mobile-${category}`}
+                    to={`/category/${category.toLowerCase()}`}
+                    className="block px-3 py-2 rounded-md text-base font-medium 
+                      text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400
+                      hover:bg-gray-100 dark:hover:bg-gray-800/50"
+                  >
+                    {category}
+                  </Link>
+                ))}
+                {!isAuthenticated && (
+                  <>
+                    <Link
+                      to="/login"
+                      className="block px-3 py-2 rounded-md text-base font-medium 
+                        text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400
+                        hover:bg-gray-100 dark:hover:bg-gray-800/50"
+                    >
+                      Log in
+                    </Link>
+                    <Link
+                      to="/register"
+                      className="block px-3 py-2 rounded-md text-base font-medium 
+                        text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                    >
+                      Sign up
+                    </Link>
+                  </>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </nav>
+      {/* Add padding to account for fixed navbar */}
+      <div className="h-16"></div>
+    </>
   );
-}
+};
+
+export default Navbar;
