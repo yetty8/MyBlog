@@ -1,7 +1,7 @@
-import User from "../models/User.js";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { validationResult } from "express-validator";
+const User = require("../models/User");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { validationResult } = require("express-validator");
 
 // Generate JWT Token
 const generateToken = (id) => {
@@ -15,7 +15,7 @@ const generateToken = (id) => {
 // @desc    Register a new user
 // @route   POST /api/auth/register
 // @access  Public
-export const register = async (req, res) => {
+const register = async (req, res) => {
   try {
     // Check for validation errors
     const errors = validationResult(req);
@@ -70,7 +70,7 @@ export const register = async (req, res) => {
 // @desc    Authenticate user & get token
 // @route   POST /api/auth/login
 // @access  Public
-export const login = async (req, res) => {
+const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -113,7 +113,7 @@ export const login = async (req, res) => {
 // @desc    Get current logged in user
 // @route   GET /api/auth/me
 // @access  Private
-export const getMe = async (req, res) => {
+const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
     
@@ -136,4 +136,10 @@ export const getMe = async (req, res) => {
       error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
+};
+
+module.exports = {
+  register,
+  login,
+  getMe
 };
