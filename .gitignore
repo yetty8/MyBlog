@@ -34,6 +34,7 @@
 # Logs
 # OS
 # Test artifacts
+backend/.env
 frontend/.env
 node_modules/
 npm-debug.log*
