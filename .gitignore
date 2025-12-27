@@ -1,56 +1,42 @@
-# Test artifacts
-/coverage
-/test-results.xml
 
-# Environment variables
-.env
-.env.test
-
-# Dependencies
-/node_modules
-
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# IDE
-.vscode
-.idea
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# OS
 .DS_Store
-Thumbs.db
-
-# Environment variables
 .env
-.env.local
 .env.development.local
-.env.test.local
+.env.local
 .env.production.local
-
-# Dependencies
-node_modules/
-.pnp
-.pnp.js
-
-# Build files
-/build
-/dist
+.env.test
+.env.test.local
+.idea
 .next/
 .out/
-
+.pnp
+.pnp.js
+.vscode
+.vscode/frontend/.env
+*.local
+*.njsproj
+*.ntvs*
+*.sln
+*.suo
+*.sw?
+/build
+/coverage
+/dist
+/node_modules
+/test-results.xml
+# Build files
 # Debug logs
+# Dependencies
+# Environment files
+# Environment variables
+# IDE
+# Local development
+# Logs
+# OS
+# Test artifacts
+frontend/.env
+node_modules/
 npm-debug.log*
+Thumbs.db
 yarn-debug.log*
 yarn-error.log*
-
-# Local development
-.DS_Store
-.vscode/frontend/.env
-frontend/.env
