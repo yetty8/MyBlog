@@ -1,11 +1,30 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { FiArrowRight, FiBookOpen, FiEdit3, FiUsers } from "react-icons/fi";
 import categoriesData from "../data/categoryData";
+
+// Floating shape component for background decoration
+const FloatingShape = ({ className, ...props }) => (
+  <motion.div
+    className={`absolute rounded-full opacity-10 dark:opacity-5 ${className}`}
+    animate={{
+      y: [0, 15, 0],
+      x: [0, 10, 0],
+    }}
+    transition={{
+      duration: 8,
+      repeat: Infinity,
+      ease: "easeInOut",
+    }}
+    {...props}
+  />
+);
 
 export default function Home() {
   const navigate = useNavigate();
   const videoRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
 
   // Auto-play and loop video
   useEffect(() => {
@@ -15,12 +34,20 @@ export default function Home() {
         console.log("Video autoplay prevented:", error);
       });
     }
+    setIsVisible(true);
   }, []);
 
   const handleCreateAccount = () => navigate("/register");
   const handleExplorePosts = () => {
     document.getElementById("categories")?.scrollIntoView({ behavior: "smooth" });
   };
+
+  // Stats data
+  const stats = [
+    { value: "10K+", label: "Active Readers", icon: <FiBookOpen size={24} /> },
+    { value: "5K+", label: "Articles", icon: <FiEdit3 size={24} /> },
+    { value: "1K+", label: "Writers", icon: <FiUsers size={24} /> }
+  ];
 
   // Animation variants
   const fadeIn = {
@@ -36,40 +63,112 @@ export default function Home() {
     <div className="w-full bg-white dark:bg-gray-900">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-24">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 dark:from-black/30 dark:to-black/50"></div>
-        </div>
-        
+        {/* Floating background shapes */}
+        <FloatingShape className="w-64 h-64 bg-blue-500 -top-32 -left-32" />
+        <FloatingShape 
+          className="w-96 h-96 bg-purple-500 -bottom-48 -right-48" 
+          style={{ animationDelay: '2s' }}
+        />
+        <FloatingShape 
+          className="w-80 h-80 bg-indigo-500 top-1/4 -right-40" 
+          style={{ animationDelay: '4s' }}
+        />
+
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial="hidden"
-            animate="visible"
+            animate={isVisible ? "visible" : "hidden"}
             variants={fadeIn}
           >
-            <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight">
-              Share your stories.
-              <br />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
-                Inspire the world.
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-block px-4 py-2 mb-6 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-sm font-medium"
+            >
+              Welcome to the future of blogging
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight"
+            >
+              Share your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">stories</span>,<br />
+              <span className="relative inline-block">
+                <span className="relative z-10">inspire the world</span>
+                <motion.span
+                  className="absolute bottom-2 left-0 w-full h-4 bg-blue-100 dark:bg-blue-900/40 -z-0"
+                  initial={{ scaleX: 0, originX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                />
               </span>
-            </h1>
-            <p className="text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto mb-10">
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-xl text-gray-700 dark:text-gray-300 mb-10 max-w-2xl mx-auto"
+            >
               A modern platform where writers express ideas and connect with a global community.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="flex flex-col sm:flex-row justify-center gap-4 mb-16"
+            >
               <button
                 onClick={handleCreateAccount}
-                className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl"
+                className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               >
-                Start Writing Now
+                <span className="relative z-10 flex items-center justify-center">
+                  Start Writing Now
+                  <FiArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                </span>
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity -z-0" />
               </button>
               <button
                 onClick={handleExplorePosts}
-                className="px-8 py-4 bg-white/90 hover:bg-white text-blue-600 border-2 border-blue-600 font-semibold rounded-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg dark:bg-gray-800/90 dark:border-blue-500 dark:text-blue-400 dark:hover:bg-gray-800"
+                className="px-8 py-4 bg-white/90 hover:bg-white text-blue-600 border-2 border-blue-600 font-semibold rounded-xl transition-all duration-300 hover:shadow-lg dark:bg-gray-800/90 dark:border-blue-500 dark:text-blue-400 dark:hover:bg-gray-800"
               >
                 Explore Content
               </button>
-            </div>
+            </motion.div>
+
+            {/* Stats Section */}
+            <motion.div 
+              className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              {stats.map((stat, index) => (
+                <motion.div
+                  key={index}
+                  className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700"
+                  whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                >
+                  <div className="flex items-center justify-center sm:justify-start">
+                    <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mr-4">
+                      {stat.icon}
+                    </div>
+                    <div>
+                      <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                        {stat.value}
+                      </div>
+                      <div className="text-gray-600 dark:text-gray-300">
+                        {stat.label}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
           </motion.div>
         </div>
       </section>
@@ -210,37 +309,108 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-indigo-700 dark:from-blue-700 dark:to-indigo-800 text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Ready to start your blogging journey?
-            </h2>
-            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-              Join thousands of writers who are already sharing their stories and making an impact.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <button
-                onClick={handleCreateAccount}
-                className="px-8 py-3 bg-white text-blue-700 hover:bg-gray-100 font-semibold rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
-              >
-                Get Started Free
-              </button>
-              <button
-                onClick={handleExplorePosts}
-                className="px-8 py-3 bg-transparent border-2 border-white text-white hover:bg-white/10 font-semibold rounded-lg transition-all duration-300"
-              >
-                Browse Content
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+<section className="relative py-20 overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-700 dark:from-indigo-800 dark:to-purple-900">
+  {/* Animated background elements */}
+  <div className="absolute inset-0 overflow-hidden opacity-20">
+    <div className="absolute top-0 left-0 w-64 h-64 bg-white rounded-full mix-blend-overlay -translate-x-1/2 -translate-y-1/2 animate-float"></div>
+    <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full mix-blend-overlay translate-x-1/3 translate-y-1/2 animate-float" style={{ animationDelay: '2s' }}></div>
+  </div>
+
+  <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="text-center">
+      <motion.h2 
+        className="text-4xl md:text-5xl font-bold text-white mb-6"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        Ready to start your <span className="text-yellow-300">blogging journey</span>?
+      </motion.h2>
+      
+      <motion.p 
+        className="text-xl text-indigo-100 max-w-2xl mx-auto mb-10"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.1 }}
+      >
+        Join our community of passionate writers and share your unique voice with the world.
+      </motion.p>
+
+      <motion.div 
+        className="flex flex-col sm:flex-row justify-center gap-4"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+      >
+        <button
+          onClick={handleCreateAccount}
+          className="group relative px-8 py-4 bg-white text-indigo-700 font-semibold rounded-xl 
+            hover:bg-gray-100 hover:scale-105 transform transition-all duration-300
+            shadow-lg hover:shadow-xl"
+        >
+          <span className="relative z-10 flex items-center justify-center">
+            Get Started Free
+            <svg 
+              className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </span>
+          <span className="absolute inset-0 bg-white/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></span>
+        </button>
+
+        <button
+          onClick={handleExplorePosts}
+          className="px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-xl
+            hover:bg-white/10 hover:scale-105 transform transition-all duration-300
+            backdrop-blur-sm"
+        >
+          <span className="flex items-center justify-center">
+            Browse Content
+            <svg 
+              className="ml-2 w-5 h-5" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </span>
+        </button>
+      </motion.div>
+
+      {/* Stats */}
+      <motion.div 
+        className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.3 }}
+      >
+        {[
+          { value: "10K+", label: "Active Writers" },
+          { value: "50K+", label: "Articles" },
+          { value: "1M+", label: "Monthly Readers" },
+          { value: "24/7", label: "Support" }
+        ].map((stat, index) => (
+          <div key={index} className="text-center">
+            <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
+            <div className="text-indigo-200 text-sm font-medium">{stat.label}</div>
+          </div>
+        ))}
+      </motion.div>
+    </div>
+  </div>
+
+  {/* Decorative elements */}
+  <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white/10 to-transparent"></div>
+</section>
     </div>
   );
 }

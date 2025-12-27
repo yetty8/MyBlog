@@ -1,33 +1,39 @@
 // src/data/travelData.js
 const travelPosts = [
   {
-    slug: "budget-travel-tips",
-    title: "Budget Travel Tips",
-    description: "Travel the world without breaking the bank.",
+    slug: "hidden-gems-europe",
+    title: "Hidden Gems in Europe",
+    description: "Discover off-the-beaten-path destinations in Europe.",
+    image: "/europe.jpg",
+    category: "travel",
+  },
+  {
+    slug: "solo-travel-tips",
+    title: "Solo Travel: A Complete Guide",
+    description: "Essential tips for safe and enjoyable solo adventures.",
+    image: "/solo-travel.jpg",
+    category: "travel",
+  },
+  {
+    slug: "sustainable-travel",
+    title: "Sustainable Travel in 2025",
+    description: "How to explore the world responsibly.",
     image: "/exploring.jpg",
     category: "travel",
   },
   {
-    slug: "hidden-gems-europe",
-    title: "Hidden Gems in Europe",
-    description: "Discover off-the-beaten-path destinations.",
+    slug: "budget-travel-hacks",
+    title: "Budget Travel Hacks for 2025",
+    description: "Travel more while spending less with these expert tips.",
     image: "/city.jpg",
     category: "travel",
   },
   {
-    slug: "solo-travel-guide",
-    title: "Solo Travel Guide",
-    description: "Tips for traveling alone safely and confidently.",
+    slug: "food-travel-asia",
+    title: "Culinary Adventures in Asia",
+    description: "Must-try foods and where to find them in Asia.",
     image: "/nature.jpg",
     category: "travel",
-  },
-  {
-    slug: "traveling-with-family",
-    title: "Traveling with Family",
-    description: "Make family trips enjoyable for everyone.",
-    image: "/culinary.jpg",
-    category: "travel",
-  },
+  }
 ];
-
 export default travelPosts;

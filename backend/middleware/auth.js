@@ -1,53 +1,42 @@
-import jwt from 'jsonwebtoken';
-import asyncHandler from 'express-async-handler';
-import User from '../models/User.js';
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
 // Protect routes
-const protect = asyncHandler(async (req, res, next) => {
+exports.protect = async (req, res, next) => {
   let token;
 
-  // Get token from header
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
   ) {
-    try {
-      // Get token from header
-      token = req.headers.authorization.split(' ')[1];
-
-      // Verify token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-      // Get user from the token
-      req.user = await User.findById(decoded.id).select('-password');
-
-      if (!req.user) {
-        res.status(401);
-        throw new Error('Not authorized, user not found');
-      }
-
-      next();
-    } catch (error) {
-      console.error('Authentication Error:', error);
-      res.status(401);
-      throw new Error('Not authorized, token failed');
-    }
+    // Set token from Bearer token in header
+    token = req.headers.authorization.split(' ')[1];
+  }
+  // Set token from cookie
+  else if (req.cookies.token) {
+    token = req.cookies.token;
   }
 
+  // Make sure token exists
   if (!token) {
-    res.status(401);
-    throw new Error('Not authorized, no token');
+    return res.status(401).json({
+      success: false,
+      message: 'Not authorized to access this route'
+    });
   }
-});
 
-// Admin middleware
-const admin = (req, res, next) => {
-  if (req.user && req.user.isAdmin) {
+  try {
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    req.user = await User.findById(decoded.id);
+
     next();
-  } else {
-    res.status(403);
-    throw new Error('Not authorized as an admin');
+  } catch (err) {
+    console.error('Authentication error:', err);
+    return res.status(401).json({
+      success: false,
+      message: 'Not authorized to access this route'
+    });
   }
 };
-
-export { protect, admin };

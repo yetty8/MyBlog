@@ -1,116 +1,112 @@
-// backend/routes/posts.js
 const express = require('express');
-const { query, validationResult } = require('express-validator');
 const Post = require('../models/Post');
+const { protect } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Input validation for search and pagination
-const validateSearchAndPagination = [
-  query('page').optional().isInt({ min: 1 }).toInt(),
-  query('limit').optional().isInt({ min: 1, max: 100 }).toInt(),
-  query('q').optional().trim().escape(),
-  query('sort').optional().isIn(['newest', 'oldest', 'title']).withMessage('Invalid sort option'),
-  query('tags').optional().isString().trim(),
-  (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    next();
-  }
-];
-
-// Get ALL posts with search, filter, and pagination
-router.get("/", validateSearchAndPagination, async (req, res, next) => {
+// @desc    Get all posts
+// @route   GET /api/posts
+// @access  Public
+router.get('/', async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
-    const searchQuery = req.query.q || '';
-    const tags = req.query.tags ? req.query.tags.split(',') : [];
-    
+    const { q: searchQuery, tags, page = 1, limit = 10, sort = '-createdAt' } = req.query;
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
     // Build the query
-    let query = {};
-    
-    // Text search
+    let query = { status: 'published' };
+
+    // Enhanced Text search
     if (searchQuery) {
-      query.$text = { $search: searchQuery };
+      // Split the search query into individual words and remove empty strings
+      const searchTerms = searchQuery
+        .split(/\s+/) // Split by whitespace
+        .filter(term => term.length > 0)
+        .map(term => term.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')); // Escape regex special chars
+
+      if (searchTerms.length > 0) {
+        // Create an array of conditions for each search term
+        const searchConditions = searchTerms.map(term => {
+          const regex = new RegExp(term, 'i'); // Case insensitive
+          return {
+            $or: [
+              { title: { $regex: regex } },
+              { content: { $regex: regex } },
+              { tags: { $in: [regex] } }
+            ]
+          };
+        });
+
+        // Use $and to require ALL search terms to match somewhere in the document
+        query.$and = searchConditions;
+      }
     }
-    
+
     // Filter by tags if provided
-    if (tags.length > 0) {
-      query.tags = { $in: tags };
+    if (tags) {
+      const tagsArray = Array.isArray(tags) ? tags : [tags];
+      query.tags = { $in: tagsArray };
     }
-    
-    // Sorting
-    let sortOption = { createdAt: -1 }; // Default: newest first
-    if (req.query.sort === 'oldest') {
-      sortOption = { createdAt: 1 };
-    } else if (req.query.sort === 'title') {
-      sortOption = { title: 1 };
-    }
-    
-    // Get total count for pagination
-    const total = await Post.countDocuments(query).exec();
-    
-    // Get paginated results
+
+    // Execute query with pagination
+    const total = await Post.countDocuments(query);
     const posts = await Post.find(query)
-      .sort(sortOption)
+      .populate('author', 'name')
+      .populate('comments')
+      .sort(sort)
       .skip(skip)
-      .limit(limit)
-      .populate('author', 'name email')
-      .exec();
-    
-    res.json({
+      .limit(parseInt(limit))
+      .lean();
+
+    res.status(200).json({
       success: true,
+      count: posts.length,
       total,
-      page,
+      page: parseInt(page),
       totalPages: Math.ceil(total / limit),
       data: posts
     });
-    
   } catch (err) {
     console.error('Error fetching posts:', err);
-    next(err);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while fetching posts'
+    });
   }
 });
 
-// Get ONE post by slug
-router.get("/:slug", async (req, res, next) => {
+// @desc    Get single post by slug
+// @route   GET /api/posts/:slug
+// @access  Public
+router.get('/:slug', async (req, res) => {
   try {
-    const post = await Post.findOne({ slug: req.params.slug })
-      .populate('author', 'name email')
-      .populate('comments');
-    
+    const post = await Post.findOne({ slug: req.params.slug, status: 'published' })
+      .populate('author', 'name')
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'author',
+          select: 'name'
+        }
+      });
+
     if (!post) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
-        message: 'Post not found' 
+        message: 'Post not found'
       });
     }
-    
-    res.json({
+
+    res.status(200).json({
       success: true,
       data: post
     });
   } catch (err) {
     console.error('Error fetching post:', err);
-    next(err);
-  }
-});
-// Debug route to list all posts with slugs
-router.get("/debug/all", async (req, res, next) => {
-  try {
-    const posts = await Post.find({}, 'title slug').lean();
-    res.json({
-      success: true,
-      count: posts.length,
-      posts: posts
+    res.status(500).json({
+      success: false,
+      message: 'Server error while fetching post'
     });
-  } catch (err) {
-    console.error('Debug error:', err);
-    next(err);
   }
 });
+
 module.exports = router;

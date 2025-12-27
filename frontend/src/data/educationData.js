@@ -1,33 +1,39 @@
 // src/data/educationData.js
 const educationPosts = [
   {
-    slug: "learning-python",
-    title: "Learning Python",
-    description: "Step-by-step guide to mastering Python.",
-    image: "/python.jpg",
+    slug: "online-learning-trends",
+    title: "The Future of Online Learning",
+    description: "How digital education is transforming learning experiences.",
+    image: "/online-learning.jpg",
     category: "education",
   },
   {
-    slug: "data-science-basics",
-    title: "Data Science Basics",
-    description: "Understand the core concepts of Data Science.",
-    image: "/data.jpg",
+    slug: "study-techniques",
+    title: "Effective Study Techniques",
+    description: "Science-backed methods to improve your learning efficiency.",
+    image: "/study-techniques.jpg",
     category: "education",
   },
   {
-    slug: "machine-learning-fundamentals",
-    title: "Machine Learning Fundamentals",
-    description: "Get started with Machine Learning.",
-    image: "/machine.jpg",
+    slug: "career-paths-tech",
+    title: "Career Paths in Technology",
+    description: "Exploring different career opportunities in the tech industry.",
+    image: "/tech-careers.jpg",
     category: "education",
   },
   {
-    slug: "web-development-fundamentals",
-    title: "Web Development Fundamentals",
-    description: "Learn the basics of web development.",
-    image: "/web.jpg",
+    slug: "language-learning-hacks",
+    title: "Language Learning Hacks",
+    description: "Fast and effective ways to learn a new language.",
+    image: "/language-learning.jpg",
     category: "education",
   },
+  {
+    slug: "financial-literacy",
+    title: "Financial Literacy 101",
+    description: "Essential money management skills everyone should know.",
+    image: "/financial-literacy.jpg",
+    category: "education",
+  }
 ];
-
 export default educationPosts;

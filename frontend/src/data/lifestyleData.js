@@ -2,32 +2,38 @@
 const lifestyleData = [
   {
     slug: "healthy-morning-routines",
-    title: "Healthy Morning Routines",
-    description: "Start your day energized and focused.",
+    title: "Healthy Morning Routines for Success",
+    description: "Start your day energized and focused with these morning habits.",
     image: "/healthy.jpg",
     category: "lifestyle",
   },
   {
-    slug: "healthy-evening-routines",
-    title: "Healthy Evening Routines",
-    description: "End your day with relaxation and rest.",
+    slug: "minimalist-living-tips",
+    title: "The Art of Minimalist Living",
+    description: "Simplify your space and life for greater peace of mind.",
+    image: "/minimalist.jpg",
+    category: "lifestyle",
+  },
+  {
+    slug: "mindfulness-meditation",
+    title: "Mindfulness Meditation for Beginners",
+    description: "Learn how to reduce stress and improve focus through meditation.",
     image: "/mindfulness.jpg",
     category: "lifestyle",
   },
   {
-    slug: "healthy-sleep-routines",
-    title: "Healthy Sleep Routines",
-    description: "Improve your sleep quality with these tips.",
-    image: "/traveling.jpg",
+    slug: "sustainable-living",
+    title: "Sustainable Living in the Modern World",
+    description: "Practical ways to reduce your environmental impact.",
+    image: "/sustainable-living.jpg",
     category: "lifestyle",
   },
   {
-    slug: "minimalist-living-tips",
-    title: "Minimalist Living Tips",
-    description: "Simplify your space and life for peace of mind.",
-    image: "/minimalist.jpg",
+    slug: "work-life-balance",
+    title: "Achieving Work-Life Balance in 2025",
+    description: "Strategies for maintaining harmony between work and personal life.",
+    image: "/work-life.jpg",
     category: "lifestyle",
-  },
+  }
 ];
-
 export default lifestyleData;

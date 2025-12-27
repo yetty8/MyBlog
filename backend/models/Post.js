@@ -1,8 +1,6 @@
-// backend/models/Post.js
 const mongoose = require('mongoose');
-const slugify = require('slugify');
 
-const postSchema = new mongoose.Schema({
+const PostSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, 'Please add a title'],
@@ -12,55 +10,70 @@ const postSchema = new mongoose.Schema({
   slug: String,
   content: {
     type: String,
-    required: [true, 'Please add content'],
-    minlength: [20, 'Content must be at least 20 characters long']
-  },
-  excerpt: {
-    type: String,
-    maxlength: [300, 'Excerpt cannot be more than 300 characters']
+    required: [true, 'Please add some content']
   },
   tags: {
     type: [String],
     required: true
   },
   author: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.ObjectId,
     ref: 'User',
     required: true
   },
-  featuredImage: String,
   status: {
     type: String,
     enum: ['draft', 'published'],
     default: 'draft'
   },
-  publishedAt: Date
+  likes: [{
+    type: mongoose.Schema.ObjectId,
+    ref: 'User'
+  }],
+  comments: [{
+    type: mongoose.Schema.ObjectId,
+    ref: 'Comment'
+  }],
+  featuredImage: String,
+  readTime: Number
 }, {
   timestamps: true,
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
 });
 
-// Create post slug from title
-postSchema.pre('save', function(next) {
-  if (this.isModified('title')) {
-    this.slug = slugify(this.title, { lower: true, strict: true });
+// Create slug from title
+PostSchema.pre('save', function(next) {
+  this.slug = this.title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+  next();
+});
+
+// Calculate read time before saving
+PostSchema.pre('save', function(next) {
+  const wordsPerMinute = 200;
+  const wordCount = this.content.split(/\s+/).length;
+  this.readTime = Math.ceil(wordCount / wordsPerMinute);
+  next();
+});
+
+// Create text index for search
+PostSchema.index(
+  { 
+    title: 'text', 
+    content: 'text', 
+    tags: 'text' 
+  },
+  {
+    weights: {
+      title: 10,
+      tags: 5,
+      content: 1
+    },
+    name: 'text_search_index'
   }
-  next();
-});
+);
 
-// Cascade delete comments when a post is deleted
-postSchema.pre('remove', async function(next) {
-  await this.model('Comment').deleteMany({ post: this._id });
-  next();
-});
-
-// Reverse populate with virtuals
-postSchema.virtual('comments', {
-  ref: 'Comment',
-  localField: '_id',
-  foreignField: 'post',
-  justOne: false
-});
-
-module.exports = mongoose.model('Post', postSchema);
+module.exports = mongoose.model('Post', PostSchema);
