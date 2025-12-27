@@ -53,3 +53,4 @@ yarn-error.log*
 # Local development
 .DS_Store
 .vscode/frontend/.env
+frontend/.env
