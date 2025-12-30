@@ -4,19 +4,12 @@ import { motion } from "framer-motion";
 import { FiArrowRight, FiBookOpen, FiEdit3, FiUsers } from "react-icons/fi";
 import categoriesData from "../data/categoryData";
 
-// Floating shape component for background decoration
+// Floating shape component
 const FloatingShape = ({ className, ...props }) => (
   <motion.div
     className={`absolute rounded-full opacity-10 dark:opacity-5 ${className}`}
-    animate={{
-      y: [0, 15, 0],
-      x: [0, 10, 0],
-    }}
-    transition={{
-      duration: 8,
-      repeat: Infinity,
-      ease: "easeInOut",
-    }}
+    animate={{ y: [0, 15, 0], x: [0, 10, 0] }}
+    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
     {...props}
   />
 );
@@ -26,149 +19,91 @@ export default function Home() {
   const videoRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
 
-  // Auto-play and loop video
   useEffect(() => {
-    const video = videoRef.current;
-    if (video) {
-      video.play().catch(error => {
-        console.log("Video autoplay prevented:", error);
-      });
-    }
+    videoRef.current?.play().catch(() => {});
     setIsVisible(true);
   }, []);
 
   const handleCreateAccount = () => navigate("/register");
-  const handleExplorePosts = () => {
+  const handleExplorePosts = () =>
     document.getElementById("categories")?.scrollIntoView({ behavior: "smooth" });
-  };
 
-  // Stats data
   const stats = [
     { value: "10K+", label: "Active Readers", icon: <FiBookOpen size={24} /> },
     { value: "5K+", label: "Articles", icon: <FiEdit3 size={24} /> },
     { value: "1K+", label: "Writers", icon: <FiUsers size={24} /> }
   ];
 
-  // Animation variants
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.6 }
-    }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
   };
 
   return (
     <div className="w-full bg-white dark:bg-gray-900">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-24">
-        {/* Floating background shapes */}
+
+      {/* ================= HERO SECTION ================= */}
+      <section
+        className="relative overflow-hidden py-24 bg-center bg-cover"
+        style={{
+          backgroundImage: "url('/blog-bg.jpg')"
+        }}
+      >
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/60"></div>
+
+        {/* Floating shapes */}
         <FloatingShape className="w-64 h-64 bg-blue-500 -top-32 -left-32" />
-        <FloatingShape 
-          className="w-96 h-96 bg-purple-500 -bottom-48 -right-48" 
-          style={{ animationDelay: '2s' }}
-        />
-        <FloatingShape 
-          className="w-80 h-80 bg-indigo-500 top-1/4 -right-40" 
-          style={{ animationDelay: '4s' }}
-        />
+        <FloatingShape className="w-96 h-96 bg-purple-500 -bottom-48 -right-48" />
+        <FloatingShape className="w-80 h-80 bg-indigo-500 top-1/4 -right-40" />
 
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial="hidden"
-            animate={isVisible ? "visible" : "hidden"}
-            variants={fadeIn}
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="inline-block px-4 py-2 mb-6 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-sm font-medium"
-            >
+        <div className="relative max-w-6xl mx-auto px-4 text-center text-white">
+          <motion.div initial="hidden" animate={isVisible ? "visible" : "hidden"} variants={fadeIn}>
+
+            <div className="inline-block px-4 py-2 mb-6 rounded-full bg-white/20 text-sm font-medium">
               Welcome to the future of blogging
-            </motion.div>
+            </div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight"
-            >
-              Share your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">stories</span>,<br />
-              <span className="relative inline-block">
-                <span className="relative z-10">inspire the world</span>
-                <motion.span
-                  className="absolute bottom-2 left-0 w-full h-4 bg-blue-100 dark:bg-blue-900/40 -z-0"
-                  initial={{ scaleX: 0, originX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                />
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
+              Share your{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
+                stories
               </span>
-            </motion.h1>
+              ,<br /> inspire the world
+            </h1>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-xl text-gray-700 dark:text-gray-300 mb-10 max-w-2xl mx-auto"
-            >
+            <p className="text-xl text-gray-200 mb-10 max-w-2xl mx-auto">
               A modern platform where writers express ideas and connect with a global community.
-            </motion.p>
+            </p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex flex-col sm:flex-row justify-center gap-4 mb-16"
-            >
+            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">
               <button
                 onClick={handleCreateAccount}
-                className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-lg transition"
               >
-                <span className="relative z-10 flex items-center justify-center">
-                  Start Writing Now
-                  <FiArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-                </span>
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity -z-0" />
+                Start Writing Now <FiArrowRight className="inline ml-2" />
               </button>
+
               <button
                 onClick={handleExplorePosts}
-                className="px-8 py-4 bg-white/90 hover:bg-white text-blue-600 border-2 border-blue-600 font-semibold rounded-xl transition-all duration-300 hover:shadow-lg dark:bg-gray-800/90 dark:border-blue-500 dark:text-blue-400 dark:hover:bg-gray-800"
+                className="px-8 py-4 bg-white/90 text-blue-600 font-semibold rounded-xl hover:bg-white transition"
               >
                 Explore Content
               </button>
-            </motion.div>
+            </div>
 
-            {/* Stats Section */}
-            <motion.div 
-              className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16"
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              {stats.map((stat, index) => (
-                <motion.div
-                  key={index}
-                  className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700"
-                  whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {stats.map((stat, i) => (
+                <div
+                  key={i}
+                  className="bg-white/10 backdrop-blur p-6 rounded-2xl border border-white/20"
                 >
-                  <div className="flex items-center justify-center sm:justify-start">
-                    <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mr-4">
-                      {stat.icon}
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {stat.value}
-                      </div>
-                      <div className="text-gray-600 dark:text-gray-300">
-                        {stat.label}
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
+                  <div className="flex items-center justify-center mb-2">{stat.icon}</div>
+                  <div className="text-2xl font-bold">{stat.value}</div>
+                  <div className="text-gray-300">{stat.label}</div>
+                </div>
               ))}
-            </motion.div>
+            </div>
           </motion.div>
         </div>
       </section>

@@ -1,4 +1,4 @@
-// src/pages/Home.jsx
+// src/components/Hero.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, useAnimation } from "framer-motion";
@@ -8,7 +8,7 @@ import categoriesData from "../data/categoryData";
 // Floating shape component for background decoration
 const FloatingShape = ({ className, ...props }) => (
   <motion.div
-    className={`absolute rounded-full opacity-10 dark:opacity-5 ${className}`}
+    className={`absolute rounded-full opacity-20 dark:opacity-10 ${className}`}
     animate={{
       y: [0, 15, 0],
       x: [0, 10, 0],
@@ -57,9 +57,22 @@ export default function Home() {
   ];
 
   return (
-    <div className="w-full bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <div className="w-full">
       {/* Hero Section */}
-      <section className="relative pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden">
+      <section 
+  className="relative pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden min-h-screen"
+  style={{ 
+    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${process.env.PUBLIC_URL}/images/blog-bg.jpg)`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    backgroundAttachment: 'fixed',
+    minHeight: '100vh'
+  }}
+      >
+        {/* Dark overlay for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/80 to-gray-900/60 dark:from-gray-900/90 dark:to-gray-900/80" />
+        
         {/* Background shapes */}
         <FloatingShape className="w-64 h-64 bg-blue-500 -top-32 -left-32" />
         <FloatingShape 
@@ -78,7 +91,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                className="inline-block px-4 py-2 mb-6 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-sm font-medium"
+                className="inline-block px-4 py-2 mb-6 rounded-full bg-blue-100/20 dark:bg-blue-900/30 text-blue-300 dark:text-blue-300 text-sm font-medium backdrop-blur-sm"
               >
                 Welcome to the future of blogging
               </motion.div>
@@ -87,13 +100,13 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-tight"
               >
-                Share your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-600">stories</span>,<br />
+                Share your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">stories</span>,<br />
                 <span className="relative inline-block">
                   <span className="relative z-10">inspire the world</span>
                   <motion.span
-                    className="absolute bottom-2 left-0 w-full h-4 bg-blue-100 dark:bg-blue-900/40 -z-0"
+                    className="absolute bottom-2 left-0 w-full h-4 bg-blue-100/20 dark:bg-blue-900/40 -z-0"
                     initial={{ scaleX: 0, originX: 0 }}
                     animate={{ scaleX: 1 }}
                     transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -105,7 +118,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-xl text-gray-600 dark:text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed"
+                className="text-xl text-gray-200 dark:text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed"
               >
                 Join our community of passionate writers and readers. Share your knowledge, experiences, and stories with the world.
               </motion.p>
@@ -128,7 +141,7 @@ export default function Home() {
                 </button>
                 <button
                   onClick={handleExplorePosts}
-                  className="px-8 py-4 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-blue-600 dark:text-blue-400 border border-gray-200 dark:border-gray-700 font-semibold rounded-xl transition-all duration-300 hover:shadow-md"
+                  className="px-8 py-4 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20 hover:border-white/30 font-semibold rounded-xl transition-all duration-300 hover:shadow-md"
                 >
                   Explore Articles
                 </button>
@@ -145,18 +158,18 @@ export default function Home() {
               {stats.map((stat, index) => (
                 <motion.div
                   key={index}
-                  className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700"
+                  className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/10"
                   whileHover={{ y: -5, transition: { duration: 0.2 } }}
                 >
                   <div className="flex items-center">
-                    <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mr-4">
+                    <div className="p-3 rounded-lg bg-white/20 text-white mr-4">
                       {stat.icon}
                     </div>
                     <div>
-                      <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                      <div className="text-2xl font-bold text-white">
                         {stat.value}
                       </div>
-                      <div className="text-gray-500 dark:text-gray-400">
+                      <div className="text-gray-200">
                         {stat.label}
                       </div>
                     </div>
@@ -168,7 +181,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Rest of your component remains the same */}
+      {/* Categories Section */}
       <div className="py-12 md:py-20 bg-white dark:bg-gray-900">
         {categoriesData.map((category, index) => (
           <section
@@ -177,7 +190,7 @@ export default function Home() {
             ref={categoryRefs.current[category.name]}
             className="mb-16 md:mb-24"
           >
-            {/* ... existing category section ... */}
+            {/* Category content remains the same */}
           </section>
         ))}
       </div>
