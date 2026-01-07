@@ -34,12 +34,9 @@
 # Logs
 # OS
 # Test artifacts
-backend/.env
 frontend/.env
 node_modules/
 npm-debug.log*
 Thumbs.db
 yarn-debug.log*
 yarn-error.log*
-.vercel
-.env*.local
