@@ -1,23 +1,53 @@
 import React, { useRef, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { FiArrowRight, FiBookOpen, FiEdit3, FiUsers } from "react-icons/fi";
 import categoriesData from "../data/categoryData";
 
-// Floating shape component
+/* ---------- Floating Shape ---------- */
 const FloatingShape = ({ className, ...props }) => (
   <motion.div
     className={`absolute rounded-full opacity-10 dark:opacity-5 ${className}`}
-    animate={{ y: [0, 15, 0], x: [0, 10, 0] }}
-    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+    animate={{ y: [0, 20, 0], x: [0, 12, 0] }}
+    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
     {...props}
   />
 );
+
+/* ---------- Animated Counter ---------- */
+const AnimatedNumber = ({ value }) => {
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    let start = 0;
+    const end = parseInt(value.replace(/\D/g, ""));
+    const duration = 1200;
+    const increment = end / (duration / 16);
+
+    const step = () => {
+      start += increment;
+      if (start < end) {
+        setDisplay(Math.floor(start));
+        requestAnimationFrame(step);
+      } else {
+        setDisplay(end);
+      }
+    };
+
+    step();
+  }, [value]);
+
+  return <span>{display.toLocaleString()}+</span>;
+};
 
 export default function Home() {
   const navigate = useNavigate();
   const videoRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
+
+  /* ---------- Parallax Hero ---------- */
+  const { scrollY } = useScroll();
+  const bgY = useTransform(scrollY, [0, 400], ["0%", "8%"]);
 
   useEffect(() => {
     videoRef.current?.play().catch(() => {});
@@ -29,9 +59,9 @@ export default function Home() {
     document.getElementById("categories")?.scrollIntoView({ behavior: "smooth" });
 
   const stats = [
-    { value: "10K+", label: "Active Readers", icon: <FiBookOpen size={24} /> },
-    { value: "5K+", label: "Articles", icon: <FiEdit3 size={24} /> },
-    { value: "1K+", label: "Writers", icon: <FiUsers size={24} /> }
+    { value: "10000+", label: "Active Readers", icon: <FiBookOpen size={26} /> },
+    { value: "5000+", label: "Articles Published", icon: <FiEdit3 size={26} /> },
+    { value: "1000+", label: "Verified Writers", icon: <FiUsers size={26} /> }
   ];
 
   const fadeIn = {
@@ -40,73 +70,83 @@ export default function Home() {
   };
 
   return (
-    <div className="w-full bg-white dark:bg-gray-900">
+    <div className="w-full bg-white dark:bg-gray-900 overflow-hidden">
 
-      {/* ================= HERO SECTION ================= */}
-      <section
-        className="relative overflow-hidden py-24 bg-center bg-cover"
-        style={{
-          backgroundImage: "url('/blog-bg.jpg')"
-        }}
-      >
-        {/* Dark overlay */}
-        <div className="absolute inset-0 bg-black/60"></div>
+      {/* ================= HERO (REPLACED) ================= */}
+      <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
+        {/* Parallax Background */}
+        <motion.div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('/blogbg.jpg')", y: bgY }}
+        />
+        <div className="absolute inset-0 bg-black/60" />
 
         {/* Floating shapes */}
-        <FloatingShape className="w-64 h-64 bg-blue-500 -top-32 -left-32" />
+        <FloatingShape className="w-72 h-72 bg-blue-500 -top-32 -left-32" />
         <FloatingShape className="w-96 h-96 bg-purple-500 -bottom-48 -right-48" />
         <FloatingShape className="w-80 h-80 bg-indigo-500 top-1/4 -right-40" />
 
-        <div className="relative max-w-6xl mx-auto px-4 text-center text-white">
-          <motion.div initial="hidden" animate={isVisible ? "visible" : "hidden"} variants={fadeIn}>
+        <div className="relative max-w-6xl mx-auto px-6 text-center text-white">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <span className="inline-block px-5 py-2 mb-6 text-sm font-medium rounded-full bg-white/20 backdrop-blur">
+              Built for writers who want impact
+            </span>
 
-            <div className="inline-block px-4 py-2 mb-6 rounded-full bg-white/20 text-sm font-medium">
-              Welcome to the future of blogging
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
-              Share your{" "}
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6">
+              Publish smarter.{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
-                stories
+                Grow faster.
               </span>
-              ,<br /> inspire the world
+              <br /> Inspire globally.
             </h1>
 
-            <p className="text-xl text-gray-200 mb-10 max-w-2xl mx-auto">
-              A modern platform where writers express ideas and connect with a global community.
+            <p className="text-xl text-gray-200 max-w-2xl mx-auto mb-10">
+              A modern blogging platform with real-time publishing,
+              discoverability, and a community built for serious creators.
             </p>
 
-            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
               <button
                 onClick={handleCreateAccount}
-                className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-lg transition"
+                className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-xl font-semibold shadow-xl transition-transform hover:-translate-y-1"
               >
-                Start Writing Now <FiArrowRight className="inline ml-2" />
+                Start Writing <FiArrowRight className="inline ml-2" />
               </button>
 
               <button
                 onClick={handleExplorePosts}
-                className="px-8 py-4 bg-white/90 text-blue-600 font-semibold rounded-xl hover:bg-white transition"
+                className="px-8 py-4 bg-white/90 hover:bg-white text-blue-600 rounded-xl font-semibold shadow-lg"
               >
                 Explore Content
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {stats.map((stat, i) => (
-                <div
+            {/* Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+              {stats.map((s, i) => (
+                <motion.div
                   key={i}
-                  className="bg-white/10 backdrop-blur p-6 rounded-2xl border border-white/20"
+                  whileHover={{ y: -6 }}
+                  className="bg-white/10 backdrop-blur p-6 rounded-2xl shadow-xl"
                 >
-                  <div className="flex items-center justify-center mb-2">{stat.icon}</div>
-                  <div className="text-2xl font-bold">{stat.value}</div>
-                  <div className="text-gray-300">{stat.label}</div>
-                </div>
+                  <div className="flex justify-center mb-3 text-blue-300">
+                    {s.icon}
+                  </div>
+                  <div className="text-3xl font-bold">
+                    <AnimatedNumber value={s.value} />
+                  </div>
+                  <div className="text-gray-200">{s.label}</div>
+                </motion.div>
               ))}
             </div>
           </motion.div>
         </div>
       </section>
+      {/* ================= END HERO ================= */}
 
       {/* Video Section */}
       <section className="relative py-20 bg-white dark:bg-gray-900 overflow-hidden">
@@ -156,7 +196,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Explore Our Categories
+              Discover what people are reading
             </h2>
             <div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 mx-auto"></div>
           </div>
